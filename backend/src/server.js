@@ -17,7 +17,7 @@ const downloadRouter = require('./routes/download');
 
 /* ─── App ─────────────────────────────────────────────────────────────────── */
 const app  = express();
-const PORT = parseInt(process.env.PORT || '4000', 10);
+const PORT = parseInt(process.env.PORT || '10000', 10);
 
 /* ─── CORS ────────────────────────────────────────────────────────────────── */
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000')
