@@ -1,0 +1,61 @@
+# backend/render.yaml
+services:
+  - type: web
+    name: instadown-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: ALLOWED_ORIGINS
+        value: https://YOUR-FRONTEND.vercel.app
+      - key: YTDLP_PATH
+        value: /usr/local/bin/yt-dlp
+      - key: RATE_LIMIT_MAX
+        value: 20
+```
+
+**2b. Your `backend/Dockerfile` already exists and installs yt-dlp** — it's the one from your project. It's perfect as-is.
+
+**2c. On Render:**
+1. Go to **render.com** → Sign up (free, no credit card)
+2. Click **New → Web Service**
+3. Connect your GitHub repo
+4. Set **Root Directory** to `backend`
+5. Render auto-detects the Dockerfile
+6. Set these environment variables in the Render dashboard:
+
+| Key | Value |
+|-----|-------|
+| `NODE_ENV` | `production` |
+| `PORT` | `4000` |
+| `ALLOWED_ORIGINS` | `https://YOUR-APP.vercel.app` ← fill in after Step 3 |
+| `YTDLP_PATH` | `/usr/local/bin/yt-dlp` |
+| `RATE_LIMIT_MAX` | `20` |
+
+7. Click **Deploy**. You'll get a URL like `https://instadown-backend.onrender.com`
+
+---
+
+## Step 3 — Deploy the Frontend to Vercel
+
+**3a. Update `frontend/.env.local` is only for local dev.** For production, Vercel uses environment variables set in its dashboard.
+
+**3b. On Vercel:**
+1. Go to **vercel.com** → Sign up with GitHub (free)
+2. Click **Add New → Project**
+3. Import your `instadown` repo
+4. Set **Root Directory** to `frontend`
+5. Add this environment variable:
+
+| Key | Value |
+|-----|-------|
+| `NEXT_PUBLIC_API_URL` | `https://instadown-backend.onrender.com` |
+
+6. Click **Deploy**. You get `https://instadown.vercel.app`
+
+**3c. Go back to Render** and update `ALLOWED_ORIGINS` to your actual Vercel URL:
+```
+ALLOWED_ORIGINS=https://instadown.vercel.app
