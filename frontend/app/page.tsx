@@ -484,12 +484,30 @@ export default function HomePage() {
       )}
 
       {/* ── Footer ── */}
-      <footer className="w-full max-w-xl mt-16 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-600">
-        <span>© {new Date().getFullYear()} InstaDown — not affiliated with Meta Platforms.</span>
-        <div className="flex gap-4">
-          <a href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</a>
-          <a href="/terms"   className="hover:text-gray-300 transition-colors">Terms</a>
-          <a href="/dmca"    className="hover:text-gray-300 transition-colors">DMCA</a>
+      <footer className="w-full max-w-xl mt-16 pt-6 border-t border-white/5 flex flex-col items-center gap-4 text-xs text-gray-600">
+        <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-3">
+          <span>&copy; {new Date().getFullYear()} InstaDown &mdash; not affiliated with Meta Platforms.</span>
+          <div className="flex gap-4">
+            <a href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</a>
+            <a href="/terms"   className="hover:text-gray-300 transition-colors">Terms</a>
+            <a href="/dmca"    className="hover:text-gray-300 transition-colors">DMCA</a>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span>Made with</span>
+          <span style={{ color: '#dc2743' }}>&#9829;</span>
+          <span>by</span>
+          <span
+            className="font-semibold"
+            style={{
+              background: 'linear-gradient(90deg, #f09433, #dc2743, #bc1888)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            Shankar
+          </span>
         </div>
       </footer>
     </main>
