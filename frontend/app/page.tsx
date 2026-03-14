@@ -59,13 +59,19 @@ function fmtBytes(b: number | null) {
 function Thumbnail({ url, duration }: { url: string | null; duration: number }) {
   const [failed, setFailed] = useState(false);
 
-  if (!url || failed) {
+  // url is already a proxied /api/thumbnail?url=... path from the backend
+  const src = url ? `${API_URL}${url}` : null;
+
+  if (!src || failed) {
     return (
       <div
         className="w-full flex items-center justify-center text-gray-600 text-xs"
         style={{ aspectRatio: '16/9', background: '#111' }}
       >
-        {failed ? '⚠ Thumbnail unavailable' : ''}
+        <span className="flex flex-col items-center gap-2 opacity-40">
+          <Download size={24} />
+          <span>Preview unavailable</span>
+        </span>
       </div>
     );
   }
@@ -74,10 +80,8 @@ function Thumbnail({ url, duration }: { url: string | null; duration: number }) 
     <div className="relative w-full" style={{ aspectRatio: '16/9', background: '#0a0a0a' }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={url}
+        src={src}
         alt="Video thumbnail"
-        referrerPolicy="no-referrer"
-        crossOrigin="anonymous"
         onError={() => setFailed(true)}
         className="w-full h-full object-cover"
       />
@@ -189,23 +193,15 @@ function QualitySelector({
 function VideoCard({ data, onReset }: { data: VideoMeta; onReset: () => void }) {
   const [selectedIdx, setSelectedIdx] = useState(0);
 
-  const downloadDirect = () => {
+  const downloadVideo = () => {
     const fmt = data.formats[selectedIdx];
-    if (!fmt) return;
+    // Always stream through backend — this forces Content-Disposition: attachment
+    // which makes mobile browsers download instead of playing inline
+    const streamUrl = `${API_URL}/api/download?url=${encodeURIComponent(data.webpage_url)}&quality=${encodeURIComponent(fmt?.quality || 'Best')}`;
     const a = document.createElement('a');
-    a.href = fmt.url;
-    a.download = `instagram_${data.id || 'video'}_${fmt.quality}.${fmt.ext}`;
+    a.href = streamUrl;
+    a.download = `instagram_${data.id || 'video'}_${fmt?.quality || 'best'}.mp4`;
     a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-  const downloadStream = () => {
-    const a = document.createElement('a');
-    a.href = `${API_URL}/api/download?url=${encodeURIComponent(data.webpage_url)}`;
-    a.download = `instagram_${data.id || 'video'}.mp4`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -250,24 +246,18 @@ function VideoCard({ data, onReset }: { data: VideoMeta; onReset: () => void }) 
         )}
 
         {/* Download button */}
-        {data.formats.length > 0 ? (
-          <GradBtn
-            onClick={downloadDirect}
-            className="w-full px-4 py-3.5 text-sm"
-          >
-            <Download size={16} />
-            Download {selectedFmt?.quality} {selectedFmt?.ext.toUpperCase()}
-            {selectedFmt?.filesize && (
-              <span className="ml-1 text-xs opacity-70">
-                · {fmtBytes(selectedFmt.filesize)}
-              </span>
-            )}
-          </GradBtn>
-        ) : (
-          <GradBtn onClick={downloadStream} className="w-full px-4 py-3.5 text-sm">
-            <Download size={16} /> Download Video
-          </GradBtn>
-        )}
+        <GradBtn
+          onClick={downloadVideo}
+          className="w-full px-4 py-3.5 text-sm"
+        >
+          <Download size={16} />
+          Download {selectedFmt?.quality || 'Best'}
+          {selectedFmt?.filesize && (
+            <span className="ml-1 text-xs opacity-70">
+              &middot; {fmtBytes(selectedFmt.filesize)}
+            </span>
+          )}
+        </GradBtn>
 
         <button
           onClick={onReset}

@@ -14,10 +14,11 @@ const errorHandler = require('./middleware/errorHandler');
 const healthRouter   = require('./routes/health');
 const fetchRouter    = require('./routes/fetch');
 const downloadRouter = require('./routes/download');
+const thumbnailRouter = require('./routes/thumbnail');
 
 /* ─── App ─────────────────────────────────────────────────────────────────── */
 const app  = express();
-const PORT = parseInt(process.env.PORT || '10000', 10);
+const PORT = parseInt(process.env.PORT || '4000', 10);
 
 /* ─── CORS ────────────────────────────────────────────────────────────────── */
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000')
@@ -57,6 +58,7 @@ app.use('/api/', rateLimiter);
 app.use('/health',        healthRouter);
 app.use('/api/fetch',     fetchRouter);
 app.use('/api/download',  downloadRouter);
+app.use('/api/thumbnail', thumbnailRouter);
 
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
 app.use(errorHandler);
