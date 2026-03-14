@@ -38,7 +38,7 @@ const nextConfig = {
               "font-src 'self' data:",
               "img-src 'self' data: https: blob:",
               // ↓ THE CRITICAL LINE — allows fetch() to the backend
-              `connect-src 'self' ${apiUrl} http://localhost:4000`,
+              ``connect-src 'self' ${apiUrl} http://localhost:4000 https://instadow-backend.onrender.com`,
               "media-src 'self' blob: https:",
               "frame-src 'none'",
               "object-src 'none'",
