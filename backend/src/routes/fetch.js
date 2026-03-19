@@ -76,6 +76,7 @@ function buildFormats(meta) {
       if (f.height && f.height > 1080) continue;
 
       formats.push({
+        format_id: f.format_id || 'best',
         quality:  f.height ? `${f.height}p` : 'Best',
         url:      f.url,
         ext:      f.ext || 'mp4',
@@ -99,6 +100,7 @@ function buildFormats(meta) {
         if (f.height && f.height > 1080) continue;
 
         formats.push({
+          format_id: f.format_id || 'bestvideo',
           quality:  f.height ? `${f.height}p` : 'Best',
           url:      f.url,
           ext:      f.ext || 'mp4',
@@ -113,6 +115,7 @@ function buildFormats(meta) {
   // Fallback: top-level url
   if (formats.length === 0 && meta.url) {
     formats.push({
+      format_id: 'best',
       quality:  'Best',
       url:      meta.url,
       ext:      meta.ext || 'mp4',

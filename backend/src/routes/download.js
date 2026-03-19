@@ -8,7 +8,7 @@ const logger = require('../utils/logger');
 const router = Router();
 
 router.get('/', (req, res) => {
-  const { url, quality } = req.query;
+  const { url, format_id } = req.query;
 
   if (!url) return res.status(400).json({ error: 'url query param required.' });
 
@@ -19,12 +19,9 @@ router.get('/', (req, res) => {
   }
 
   const clean = normaliseUrl(url);
-  logger.info(`[download] streaming ${clean} quality=${quality || 'best'}`);
+  logger.info(`[download] streaming ${clean} format_id=${format_id || 'best'}`);
 
-  // Parse height from quality string e.g. "1080p" → 1080
-  const height = quality ? parseInt(quality.replace('p', ''), 10) : null;
-
-  streamVideo(clean, res, height);
+  streamVideo(clean, res, format_id);
 });
 
 module.exports = router;

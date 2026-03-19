@@ -10,6 +10,7 @@ import {
 
 /* ══════════════════════════════════════════════════════ Types */
 interface VideoFormat {
+  format_id: string;
   quality: string;
   url: string;
   ext: string;
@@ -197,7 +198,7 @@ function VideoCard({ data, onReset }: { data: VideoMeta; onReset: () => void }) 
     const fmt = data.formats[selectedIdx];
     // Always stream through backend — this forces Content-Disposition: attachment
     // which makes mobile browsers download instead of playing inline
-    const streamUrl = `${API_URL}/api/download?url=${encodeURIComponent(data.webpage_url)}&quality=${encodeURIComponent(fmt?.quality || 'Best')}`;
+    const streamUrl = `${API_URL}/api/download?url=${encodeURIComponent(data.webpage_url)}&format_id=${encodeURIComponent(fmt?.format_id || 'best')}`;
     const a = document.createElement('a');
     a.href = streamUrl;
     a.download = `instagram_${data.id || 'video'}_${fmt?.quality || 'best'}.mp4`;
