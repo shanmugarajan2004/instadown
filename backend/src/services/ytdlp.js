@@ -11,13 +11,17 @@ const crypto = require('crypto');
 const YTDLP = process.env.YTDLP_PATH || 'yt-dlp';
 const TIMEOUT = parseInt(process.env.DOWNLOAD_TIMEOUT_MS || '180000', 10);
 
-/* ─── Common yt-dlp flags ─────────────────────────────────────────────────── */
 const BASE_FLAGS = [
   '--no-playlist',
   '--no-warnings',
   '--no-call-home',
   '--no-check-certificate',
 ];
+
+const cookiePath = process.env.COOKIES_FILE || path.join(process.cwd(), 'cookies.txt');
+if (fs.existsSync(cookiePath)) {
+  BASE_FLAGS.push('--cookies', cookiePath);
+}
 
 /* ─── Fetch metadata ─────────────────────────────────────────────────────── */
 function fetchMetadata(url) {
