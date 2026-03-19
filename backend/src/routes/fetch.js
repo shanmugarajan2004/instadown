@@ -86,30 +86,30 @@ function buildFormats(meta) {
       if (formats.length >= 5) break;
     }
 
-    // If no combined formats found, try video-only formats (will be muxed on download)
-    if (formats.length === 0) {
-      const videoOnly = meta.formats
-        .filter((f) => f.url && f.vcodec !== 'none')
-        .sort((a, b) => (b.height || 0) - (a.height || 0));
+    // Now include video-only formats (will be muxed on download) if they offer a different height
+    const videoOnly = meta.formats
+      .filter((f) => f.url && f.vcodec !== 'none' && f.acodec === 'none')
+      .sort((a, b) => (b.height || 0) - (a.height || 0));
 
-      const seen2 = new Set();
-      for (const f of videoOnly) {
-        const key = f.height || 'unknown';
-        if (seen2.has(key)) continue;
-        seen2.add(key);
-        if (f.height && f.height > 1080) continue;
+    for (const f of videoOnly) {
+      const key = f.height || 'unknown';
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (f.height && f.height > 1080) continue;
 
-        formats.push({
-          format_id: f.format_id || 'bestvideo',
-          quality:  f.height ? `${f.height}p` : 'Best',
-          url:      f.url,
-          ext:      f.ext || 'mp4',
-          filesize: f.filesize || f.filesize_approx || null,
-          height:   f.height || 0,
-        });
-        if (formats.length >= 5) break;
-      }
+      formats.push({
+        format_id: f.format_id || 'bestvideo',
+        quality:  f.height ? `${f.height}p` : 'Best',
+        url:      f.url,
+        ext:      f.ext || 'mp4',
+        filesize: f.filesize || f.filesize_approx || null,
+        height:   f.height || 0,
+      });
+      if (formats.length >= 5) break;
     }
+    
+    // Sort combined elements by height one more time just to be safe
+    formats.sort((a, b) => b.height - a.height);
   }
 
   // Fallback: top-level url
